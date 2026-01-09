@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "wrangler pages dev --port 3000",
     "deploy": "wrangler pages deploy",
-    "build": "tsc",
+    "build": "node build.js",
     "db:migrate": "wrangler d1 execute DB --file=migrations/003_create_certifications.sql",
     "db:seed": "wrangler d1 execute DB --file=seed_certifications.sql"
   },
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240129.0",
+    "esbuild": "^0.19.11",
     "typescript": "^5.3.3",
     "wrangler": "^3.22.0"
   }
