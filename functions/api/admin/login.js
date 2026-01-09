@@ -13,9 +13,9 @@ export async function onRequestPost(context) {
     var username = body.username || '';
     var password = body.password || '';
     
-    // 환경 변수에서 관리자 정보 가져오기
-    var adminUser = env.ADMIN_USERNAME || 'admin';
-    var adminPass = env.ADMIN_PASSWORD || 'mce2024!@#';
+    // 관리자 계정 정보
+    var adminUser = 'mce8993';
+    var adminPass = '1q2w3e4r5t!';
     
     if (username === adminUser && password === adminPass) {
       // 간단한 세션 토큰 생성
