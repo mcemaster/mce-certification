@@ -5,4 +5,4 @@ pages_build_output_dir = "."
 [[d1_databases]]
 binding = "DB"
 database_name = "mce-certification-db"
-database_id = "your-database-id-here"
+database_id = "c7e8fbca-0920-4174-a7f7-67ea3aa5411c"
