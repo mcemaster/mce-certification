@@ -1,0 +1,29 @@
+{
+  "name": "mce-certification",
+  "version": "1.0.0",
+  "description": "MCE 경영인증평가원 인증 기업 검색 시스템",
+  "main": "src/index.tsx",
+  "scripts": {
+    "dev": "wrangler pages dev --port 3000",
+    "deploy": "wrangler pages deploy",
+    "build": "tsc",
+    "db:migrate": "wrangler d1 execute DB --file=migrations/003_create_certifications.sql",
+    "db:seed": "wrangler d1 execute DB --file=seed_certifications.sql"
+  },
+  "keywords": [
+    "certification",
+    "mce",
+    "search",
+    "cloudflare"
+  ],
+  "author": "MCE",
+  "license": "MIT",
+  "dependencies": {
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240129.0",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.22.0"
+  }
+}
