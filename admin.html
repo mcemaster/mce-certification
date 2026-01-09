@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>관리자 - MCE 경영인증평가원</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
@@ -12,661 +11,831 @@
       font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
       background: #f5f5f5;
       color: #333;
-      font-size: 14px;
       line-height: 1.6;
-    }
-    
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 30px 20px;
-    }
-    
-    /* 헤더 */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-      padding-bottom: 15px;
-      border-bottom: 2px solid #1a4b8c;
-    }
-    
-    .header h1 {
-      font-size: 22px;
-      color: #1a4b8c;
-    }
-    
-    .header a {
-      color: #1a4b8c;
-      text-decoration: none;
-      font-size: 13px;
-    }
-    
-    .header a:hover {
-      text-decoration: underline;
-    }
-    
-    /* 알림 */
-    .alert {
-      padding: 12px 15px;
-      margin-bottom: 15px;
-      border-radius: 4px;
-      font-size: 13px;
-    }
-    
-    .alert-ok {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-    
-    .alert-err {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-    
-    /* 통계 */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-    
-    .stat-box {
-      background: #fff;
-      border: 1px solid #ddd;
-      padding: 20px;
-      text-align: center;
-    }
-    
-    .stat-box h2 {
-      font-size: 28px;
-      color: #1a4b8c;
-      margin-bottom: 5px;
-    }
-    
-    .stat-box p {
-      font-size: 12px;
-      color: #666;
-    }
-    
-    /* 카드 */
-    .card {
-      background: #fff;
-      border: 1px solid #ddd;
-      margin-bottom: 20px;
-    }
-    
-    .card-head {
-      background: #1a4b8c;
-      color: #fff;
-      padding: 12px 15px;
       font-size: 14px;
-      font-weight: bold;
     }
     
-    .card-body {
+    /* 로그인 페이지 */
+    .login-wrap {
+      max-width: 400px;
+      margin: 100px auto;
       padding: 20px;
     }
     
-    /* 드롭존 */
-    .dropzone {
-      border: 2px dashed #ccc;
-      padding: 35px;
+    .login-box {
+      background: #fff;
+      border: 2px solid #1a4b8c;
+      padding: 40px 30px;
+    }
+    
+    .login-box h1 {
       text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
+      color: #1a4b8c;
+      font-size: 22px;
+      margin-bottom: 30px;
     }
     
-    .dropzone:hover {
-      border-color: #1a4b8c;
-      background: #f8fafc;
-    }
-    
-    .dropzone.over {
-      border-color: #1a4b8c;
-      background: #e8f0fe;
-    }
-    
-    .dropzone p {
-      color: #666;
+    .login-box .form-group {
       margin-bottom: 15px;
     }
     
-    .dropzone input {
-      display: none;
-    }
-    
-    /* 버튼 */
-    .btn {
-      display: inline-block;
-      padding: 9px 20px;
-      border: none;
-      font-size: 13px;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    
-    .btn-blue {
-      background: #1a4b8c;
-      color: #fff;
-    }
-    
-    .btn-blue:hover {
-      background: #143a6b;
-    }
-    
-    .btn-gray {
-      background: #6c757d;
-      color: #fff;
-    }
-    
-    .btn-gray:hover {
-      background: #545b62;
-    }
-    
-    .btn-red {
-      background: #dc3545;
-      color: #fff;
-      padding: 5px 10px;
-      font-size: 12px;
-    }
-    
-    .btn-red:hover {
-      background: #c82333;
-    }
-    
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-    }
-    
-    /* 폼 */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-    }
-    
-    .form-item {
-    }
-    
-    .form-item.full {
-      grid-column: span 2;
-    }
-    
-    .form-item label {
+    .login-box label {
       display: block;
-      font-size: 13px;
       font-weight: bold;
       margin-bottom: 5px;
-      color: #333;
+      color: #555;
     }
     
-    .form-item label .req {
-      color: #d00;
-    }
-    
-    .form-item input,
-    .form-item textarea {
+    .login-box input {
       width: 100%;
-      padding: 9px 10px;
+      padding: 12px;
       border: 1px solid #ccc;
-      font-size: 13px;
-      font-family: inherit;
+      font-size: 14px;
     }
     
-    .form-item input:focus,
-    .form-item textarea:focus {
+    .login-box input:focus {
       outline: none;
       border-color: #1a4b8c;
     }
     
-    .form-actions {
-      margin-top: 20px;
-      text-align: center;
-    }
-    
-    /* 테이블 */
-    .tbl-wrap {
-      overflow-x: auto;
-    }
-    
-    table {
+    .login-box button {
       width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-    
-    table th {
-      background: #f5f7fa;
-      padding: 10px 8px;
-      text-align: left;
+      padding: 14px;
+      background: #1a4b8c;
+      color: #fff;
+      border: none;
+      font-size: 16px;
       font-weight: bold;
-      border-bottom: 2px solid #ddd;
-      white-space: nowrap;
+      cursor: pointer;
+      margin-top: 10px;
     }
     
-    table td {
-      padding: 10px 8px;
-      border-bottom: 1px solid #eee;
+    .login-box button:hover {
+      background: #143a6b;
     }
     
-    table tr:hover {
-      background: #fafafa;
-    }
-    
-    .st-ok {
-      color: #28a745;
-      font-weight: bold;
-    }
-    
-    .st-exp {
-      color: #dc3545;
-      font-weight: bold;
-    }
-    
-    .empty {
-      text-align: center;
-      padding: 30px;
-      color: #888;
-    }
-    
-    /* 로딩 */
-    .overlay {
+    .login-error {
       display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(255,255,255,0.8);
-      z-index: 999;
-      justify-content: center;
+      background: #ffebee;
+      color: #c62828;
+      padding: 10px;
+      margin-top: 15px;
+      text-align: center;
+    }
+    
+    .login-error.show {
+      display: block;
+    }
+    
+    /* 관리자 페이지 */
+    .admin-wrap {
+      display: none;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .admin-wrap.show {
+      display: block;
+    }
+    
+    .admin-header {
+      background: #1a4b8c;
+      color: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
     }
     
-    .overlay.show {
+    .admin-header h1 {
+      font-size: 20px;
+    }
+    
+    .btn-logout {
+      background: #fff;
+      color: #1a4b8c;
+      border: none;
+      padding: 8px 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    /* 통계 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .stat-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .stat-card .number {
+      font-size: 32px;
+      font-weight: bold;
+      color: #1a4b8c;
+    }
+    
+    .stat-card .label {
+      color: #666;
+      margin-top: 5px;
+    }
+    
+    /* 탭 */
+    .tabs {
       display: flex;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-bottom: none;
     }
     
-    .spinner {
-      width: 45px;
-      height: 45px;
-      border: 4px solid #eee;
-      border-top-color: #1a4b8c;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+    .tab-btn {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      background: #f5f5f5;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      color: #666;
     }
     
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .tab-btn.active {
+      background: #1a4b8c;
+      color: #fff;
     }
     
-    @media (max-width: 768px) {
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-      .form-item.full {
-        grid-column: span 1;
-      }
+    /* 탭 컨텐츠 */
+    .tab-content {
+      display: none;
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 25px;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      color: #1a4b8c;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #1a4b8c;
+    }
+    
+    /* 폼 */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #555;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #1a4b8c;
+    }
+    
+    .btn-primary {
+      background: #1a4b8c;
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .btn-primary:hover {
+      background: #143a6b;
+    }
+    
+    .btn-danger {
+      background: #c62828;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    /* 파일 업로드 */
+    .file-upload {
+      border: 2px dashed #ccc;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    
+    .file-upload input[type="file"] {
+      display: none;
+    }
+    
+    .file-upload label {
+      display: inline-block;
+      padding: 12px 25px;
+      background: #e3f2fd;
+      color: #1a4b8c;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    .file-upload label:hover {
+      background: #bbdefb;
+    }
+    
+    .file-info {
+      margin-top: 10px;
+      color: #666;
+    }
+    
+    /* 테이블 */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    
+    .data-table th {
+      background: #f5f7fa;
+      padding: 12px;
+      text-align: left;
+      font-weight: bold;
+      border-bottom: 2px solid #ddd;
+      font-size: 13px;
+    }
+    
+    .data-table td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      font-size: 13px;
+    }
+    
+    .data-table tr:hover {
+      background: #f9f9f9;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    
+    .badge-valid {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    
+    .badge-expired {
+      background: #ffebee;
+      color: #c62828;
+    }
+    
+    /* 메시지 */
+    .message {
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      display: none;
+    }
+    
+    .message.show {
+      display: block;
+    }
+    
+    .message.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+    }
+    
+    .message.error {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
+    
+    /* DB 테스트 */
+    .db-test-result {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+    }
+    
+    /* 푸터 */
+    .admin-footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #888;
+      font-size: 12px;
+    }
+    
+    .admin-footer a {
+      color: #1a4b8c;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <div class="overlay" id="overlay"><div class="spinner"></div></div>
-  
-  <div class="wrap">
-    <!-- 헤더 -->
-    <div class="header">
-      <h1>인증기업 관리</h1>
-      <a href="/">← 검색 페이지</a>
-    </div>
-    
-    <!-- 알림 -->
-    <div id="alertBox"></div>
-    
-    <!-- 통계 -->
-    <div class="stats">
-      <div class="stat-box">
-        <h2 id="sTotal">0</h2>
-        <p>전체</p>
-      </div>
-      <div class="stat-box">
-        <h2 id="sActive">0</h2>
-        <p>유효</p>
-      </div>
-      <div class="stat-box">
-        <h2 id="sExpired">0</h2>
-        <p>만료</p>
-      </div>
-      <div class="stat-box">
-        <h2 id="sMonth">0</h2>
-        <p>이번달</p>
-      </div>
-    </div>
-    
-    <!-- 엑셀 업로드 -->
-    <div class="card">
-      <div class="card-head">엑셀 파일 일괄 등록</div>
-      <div class="card-body">
-        <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
-          <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="onFile(event)">
-          <p>엑셀 파일(.xlsx)을 드래그하거나 클릭하여 업로드</p>
-          <div class="btn-group">
-            <span class="btn btn-blue">파일 선택</span>
-            <span class="btn btn-gray" onclick="event.stopPropagation();downloadTpl()">양식 다운로드</span>
-          </div>
+  <!-- 로그인 페이지 -->
+  <div id="loginPage" class="login-wrap">
+    <div class="login-box">
+      <h1>🔒 관리자 로그인</h1>
+      <form id="loginForm" onsubmit="doLogin(event)">
+        <div class="form-group">
+          <label>아이디</label>
+          <input type="text" id="username" placeholder="관리자 아이디" required>
         </div>
-      </div>
-    </div>
-    
-    <!-- 수동 등록 -->
-    <div class="card">
-      <div class="card-head">수동 등록</div>
-      <div class="card-body">
-        <form id="addForm" onsubmit="onAdd(event)">
-          <div class="form-grid">
-            <div class="form-item">
-              <label>기업명 <span class="req">*</span></label>
-              <input type="text" name="company_name" required placeholder="삼성전자주식회사">
-            </div>
-            <div class="form-item">
-              <label>인증번호 <span class="req">*</span></label>
-              <input type="text" name="cert_number" required placeholder="KR-ISO9001-2024-001">
-            </div>
-            <div class="form-item">
-              <label>인증규격 <span class="req">*</span></label>
-              <input type="text" name="cert_standard" required placeholder="ISO 9001:2015">
-            </div>
-            <div class="form-item">
-              <label>인증기관 <span class="req">*</span></label>
-              <input type="text" name="cert_body" value="MCE 경영인증평가원" required>
-            </div>
-            <div class="form-item">
-              <label>발급일 <span class="req">*</span></label>
-              <input type="date" name="issue_date" required>
-            </div>
-            <div class="form-item">
-              <label>만료일 <span class="req">*</span></label>
-              <input type="date" name="expiry_date" required>
-            </div>
-            <div class="form-item full">
-              <label>인증범위 <span class="req">*</span></label>
-              <textarea name="scope" rows="2" required placeholder="반도체 제조 및 판매"></textarea>
-            </div>
-            <div class="form-item">
-              <label>담당자명</label>
-              <input type="text" name="contact_name" placeholder="선택">
-            </div>
-            <div class="form-item">
-              <label>연락처</label>
-              <input type="text" name="contact_phone" placeholder="선택">
-            </div>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-blue">등록하기</button>
-          </div>
-        </form>
-      </div>
-    </div>
-    
-    <!-- 목록 -->
-    <div class="card">
-      <div class="card-head">등록된 인증 목록</div>
-      <div class="card-body">
-        <div class="tbl-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>기업명</th>
-                <th>인증번호</th>
-                <th>인증규격</th>
-                <th>발급일</th>
-                <th>만료일</th>
-                <th>상태</th>
-                <th>삭제</th>
-              </tr>
-            </thead>
-            <tbody id="tbody">
-              <tr><td colspan="7" class="empty">로딩 중...</td></tr>
-            </tbody>
-          </table>
+        <div class="form-group">
+          <label>비밀번호</label>
+          <input type="password" id="password" placeholder="비밀번호" required>
         </div>
-      </div>
+        <button type="submit">로그인</button>
+      </form>
+      <div id="loginError" class="login-error"></div>
     </div>
   </div>
   
+  <!-- 관리자 페이지 -->
+  <div id="adminPage" class="admin-wrap">
+    <div class="admin-header">
+      <h1>MCE 경영인증평가원 - 관리자</h1>
+      <button class="btn-logout" onclick="doLogout()">로그아웃</button>
+    </div>
+    
+    <!-- 통계 -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="number" id="statTotal">0</div>
+        <div class="label">전체 인증</div>
+      </div>
+      <div class="stat-card">
+        <div class="number" id="statValid">0</div>
+        <div class="label">유효 인증</div>
+      </div>
+      <div class="stat-card">
+        <div class="number" id="statExpired">0</div>
+        <div class="label">만료 인증</div>
+      </div>
+    </div>
+    
+    <!-- 탭 -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('list')">인증 목록</button>
+      <button class="tab-btn" onclick="showTab('add')">인증 등록</button>
+      <button class="tab-btn" onclick="showTab('bulk')">엑셀 업로드</button>
+      <button class="tab-btn" onclick="showTab('settings')">설정</button>
+    </div>
+    
+    <!-- 인증 목록 -->
+    <div id="tabList" class="tab-content active">
+      <h3 class="section-title">인증기업 목록</h3>
+      <div id="listMessage" class="message"></div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>기업명</th>
+            <th>인증번호</th>
+            <th>인증규격</th>
+            <th>만료일</th>
+            <th>상태</th>
+            <th>관리</th>
+          </tr>
+        </thead>
+        <tbody id="certList"></tbody>
+      </table>
+    </div>
+    
+    <!-- 인증 등록 -->
+    <div id="tabAdd" class="tab-content">
+      <h3 class="section-title">새 인증 등록</h3>
+      <div id="addMessage" class="message"></div>
+      <form id="addForm" onsubmit="addCertification(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>기업명 *</label>
+            <input type="text" name="company_name" required>
+          </div>
+          <div class="form-group">
+            <label>인증번호 *</label>
+            <input type="text" name="cert_number" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>인증규격 *</label>
+            <select name="cert_standard" required>
+              <option value="">선택하세요</option>
+              <option value="ISO 9001:2015">ISO 9001:2015</option>
+              <option value="ISO 14001:2015">ISO 14001:2015</option>
+              <option value="ISO 45001:2018">ISO 45001:2018</option>
+              <option value="ISO 22000:2018">ISO 22000:2018</option>
+              <option value="ISO 27001:2022">ISO 27001:2022</option>
+              <option value="IATF 16949:2016">IATF 16949:2016</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>인증기관 *</label>
+            <input type="text" name="cert_body" value="MCE 경영인증평가원" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>발급일 *</label>
+            <input type="date" name="issue_date" required>
+          </div>
+          <div class="form-group">
+            <label>만료일 *</label>
+            <input type="date" name="expiry_date" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="grid-column: 1/-1;">
+            <label>인증범위 *</label>
+            <textarea name="scope" rows="3" required placeholder="인증범위를 입력하세요"></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">등록하기</button>
+      </form>
+    </div>
+    
+    <!-- 엑셀 업로드 -->
+    <div id="tabBulk" class="tab-content">
+      <h3 class="section-title">엑셀 일괄 업로드</h3>
+      <div id="bulkMessage" class="message"></div>
+      <div class="file-upload">
+        <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" onchange="handleFile(this)">
+        <label for="excelFile">📁 엑셀 파일 선택</label>
+        <div class="file-info" id="fileInfo">
+          지원 형식: .xlsx, .xls, .csv<br>
+          컬럼: 기업명, 인증번호, 인증규격, 인증기관, 발급일, 만료일, 인증범위
+        </div>
+      </div>
+      <div id="previewArea" style="display:none;">
+        <h4 style="margin-bottom:10px;">미리보기 (처음 5건)</h4>
+        <table class="data-table" id="previewTable">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+        <div style="margin-top:15px;">
+          <button class="btn-primary" onclick="uploadBulk()">업로드 실행</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 설정 -->
+    <div id="tabSettings" class="tab-content">
+      <h3 class="section-title">시스템 설정</h3>
+      <div id="settingsMessage" class="message"></div>
+      
+      <h4 style="margin-bottom:10px;">DB 연결 테스트</h4>
+      <button class="btn-primary" onclick="testDb()">DB 연결 테스트</button>
+      <div id="dbTestResult" class="db-test-result" style="display:none;"></div>
+    </div>
+    
+    <div class="admin-footer">
+      <p>&copy; 2024 MCE 경영인증평가원</p>
+      <p style="margin-top:8px;"><a href="/">← 검색 페이지로 돌아가기</a></p>
+    </div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script>
-    var allData = [];
+    var authToken = '';
+    var excelData = [];
     
-    // 드래그앤드롭
-    var dz = document.getElementById('dropzone');
-    dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('over'); });
-    dz.addEventListener('dragleave', function() { dz.classList.remove('over'); });
-    dz.addEventListener('drop', function(e) {
+    // 페이지 로드 시 토큰 확인
+    window.onload = function() {
+      var saved = sessionStorage.getItem('adminToken');
+      if (saved) {
+        authToken = saved;
+        showAdmin();
+      }
+    };
+    
+    // 로그인
+    function doLogin(e) {
       e.preventDefault();
-      dz.classList.remove('over');
-      if (e.dataTransfer.files[0]) readExcel(e.dataTransfer.files[0]);
-    });
-    
-    function onFile(e) {
-      if (e.target.files[0]) readExcel(e.target.files[0]);
+      var user = document.getElementById('username').value;
+      var pass = document.getElementById('password').value;
+      
+      fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username: user, password: pass})
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          authToken = data.token;
+          sessionStorage.setItem('adminToken', authToken);
+          showAdmin();
+        } else {
+          showLoginError(data.error || '로그인 실패');
+        }
+      })
+      .catch(function() {
+        showLoginError('서버 연결 오류');
+      });
     }
     
-    function downloadTpl() {
-      var d = [
-        ['기업명','인증번호','인증규격','인증기관','발급일','만료일','인증범위','담당자명','연락처'],
-        ['(주)예시기업','KR-ISO9001-2024-001','ISO 9001:2015','MCE 경영인증평가원','2024-01-01','2027-01-01','제품 제조 및 판매','홍길동','02-1234-5678']
-      ];
-      var ws = XLSX.utils.aoa_to_sheet(d);
-      ws['!cols'] = [{wch:20},{wch:25},{wch:15},{wch:20},{wch:12},{wch:12},{wch:30},{wch:10},{wch:15}];
-      var wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, '인증기업');
-      XLSX.writeFile(wb, 'MCE_인증기업_양식.xlsx');
+    function showLoginError(msg) {
+      var el = document.getElementById('loginError');
+      el.textContent = msg;
+      el.className = 'login-error show';
     }
     
-    function readExcel(file) {
-      loading(true);
+    function doLogout() {
+      authToken = '';
+      sessionStorage.removeItem('adminToken');
+      document.getElementById('adminPage').className = 'admin-wrap';
+      document.getElementById('loginPage').style.display = 'block';
+    }
+    
+    function showAdmin() {
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('adminPage').className = 'admin-wrap show';
+      loadList();
+    }
+    
+    // 탭
+    function showTab(name) {
+      var tabs = document.querySelectorAll('.tab-btn');
+      var contents = document.querySelectorAll('.tab-content');
+      
+      tabs.forEach(function(t, i) {
+        t.className = 'tab-btn';
+      });
+      contents.forEach(function(c) {
+        c.className = 'tab-content';
+      });
+      
+      document.getElementById('tab' + name.charAt(0).toUpperCase() + name.slice(1)).className = 'tab-content active';
+      
+      var btns = document.querySelectorAll('.tab-btn');
+      var tabNames = ['list', 'add', 'bulk', 'settings'];
+      var idx = tabNames.indexOf(name);
+      if (idx >= 0) btns[idx].className = 'tab-btn active';
+      
+      if (name === 'list') loadList();
+    }
+    
+    // 목록 로드
+    function loadList() {
+      fetch('/api/admin/list')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) {
+          showMessage('listMessage', data.error, 'error');
+          return;
+        }
+        
+        var list = data.results || [];
+        var valid = 0, expired = 0;
+        var today = new Date();
+        
+        var html = '';
+        list.forEach(function(c) {
+          var exp = new Date(c.expiry_date);
+          var isExpired = exp < today;
+          if (isExpired) expired++; else valid++;
+          
+          html += '<tr>';
+          html += '<td>' + esc(c.company_name) + '</td>';
+          html += '<td>' + esc(c.cert_number) + '</td>';
+          html += '<td>' + esc(c.cert_standard) + '</td>';
+          html += '<td>' + esc(c.expiry_date) + '</td>';
+          html += '<td><span class="badge ' + (isExpired ? 'badge-expired' : 'badge-valid') + '">' + (isExpired ? '만료' : '유효') + '</span></td>';
+          html += '<td><button class="btn-danger" onclick="deleteCert(' + c.id + ')">삭제</button></td>';
+          html += '</tr>';
+        });
+        
+        if (list.length === 0) {
+          html = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#888;">등록된 인증이 없습니다.</td></tr>';
+        }
+        
+        document.getElementById('certList').innerHTML = html;
+        document.getElementById('statTotal').textContent = list.length;
+        document.getElementById('statValid').textContent = valid;
+        document.getElementById('statExpired').textContent = expired;
+      })
+      .catch(function(err) {
+        showMessage('listMessage', '목록 로드 실패: ' + err.message, 'error');
+      });
+    }
+    
+    // 인증 등록
+    function addCertification(e) {
+      e.preventDefault();
+      var form = e.target;
+      var data = {
+        company_name: form.company_name.value,
+        cert_number: form.cert_number.value,
+        cert_standard: form.cert_standard.value,
+        cert_body: form.cert_body.value,
+        issue_date: form.issue_date.value,
+        expiry_date: form.expiry_date.value,
+        scope: form.scope.value
+      };
+      
+      fetch('/api/admin/create', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(res) {
+        if (res.error) {
+          showMessage('addMessage', res.error, 'error');
+        } else {
+          showMessage('addMessage', '등록되었습니다!', 'success');
+          form.reset();
+          form.cert_body.value = 'MCE 경영인증평가원';
+        }
+      })
+      .catch(function() {
+        showMessage('addMessage', '등록 실패', 'error');
+      });
+    }
+    
+    // 삭제
+    function deleteCert(id) {
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+      
+      fetch('/api/admin/delete/' + id, {method: 'DELETE'})
+      .then(function(r) { return r.json(); })
+      .then(function(res) {
+        if (res.error) {
+          alert(res.error);
+        } else {
+          loadList();
+        }
+      });
+    }
+    
+    // 엑셀 처리
+    function handleFile(input) {
+      var file = input.files[0];
+      if (!file) return;
+      
+      document.getElementById('fileInfo').textContent = '선택됨: ' + file.name;
+      
       var reader = new FileReader();
       reader.onload = function(e) {
-        try {
-          var data = new Uint8Array(e.target.result);
-          var wb = XLSX.read(data, {type:'array'});
-          var ws = wb.Sheets[wb.SheetNames[0]];
-          var json = XLSX.utils.sheet_to_json(ws);
-          
-          var list = [];
-          for (var i = 0; i < json.length; i++) {
-            var r = json[i];
-            var obj = {
-              company_name: r['기업명'] || '',
-              cert_number: r['인증번호'] || '',
-              cert_standard: r['인증규격'] || '',
-              cert_body: r['인증기관'] || 'MCE 경영인증평가원',
-              issue_date: fmtDate(r['발급일']),
-              expiry_date: fmtDate(r['만료일']),
-              scope: r['인증범위'] || '',
-              contact_name: r['담당자명'] || '',
-              contact_phone: r['연락처'] || ''
-            };
-            if (obj.company_name && obj.cert_number) list.push(obj);
-          }
-          
-          if (list.length === 0) {
-            loading(false);
-            alert('유효한 데이터가 없습니다.');
-            return;
-          }
-          
-          fetch('/api/admin/bulk', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({certifications: list})
-          })
-          .then(function(r) { return r.json(); })
-          .then(function(res) {
-            loading(false);
-            if (res.success) {
-              showAlert(res.inserted + '건 등록 완료', 'ok');
-              loadList();
-            } else {
-              showAlert(res.error || '오류 발생', 'err');
-            }
-          })
-          .catch(function() {
-            loading(false);
-            showAlert('서버 오류', 'err');
-          });
-        } catch (ex) {
-          loading(false);
-          showAlert('파일 처리 오류', 'err');
-        }
+        var data = new Uint8Array(e.target.result);
+        var workbook = XLSX.read(data, {type: 'array'});
+        var sheet = workbook.Sheets[workbook.SheetNames[0]];
+        var json = XLSX.utils.sheet_to_json(sheet);
+        
+        excelData = json;
+        showPreview(json);
       };
       reader.readAsArrayBuffer(file);
     }
     
-    function fmtDate(v) {
-      if (!v) return '';
-      if (typeof v === 'number') {
-        var d = XLSX.SSF.parse_date_code(v);
-        return d.y + '-' + String(d.m).padStart(2,'0') + '-' + String(d.d).padStart(2,'0');
-      }
-      return String(v);
-    }
-    
-    function onAdd(e) {
-      e.preventDefault();
-      loading(true);
-      
-      var form = e.target;
-      var fd = new FormData(form);
-      var obj = {};
-      fd.forEach(function(v, k) { obj[k] = v; });
-      
-      fetch('/api/admin/create', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(obj)
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(res) {
-        loading(false);
-        if (res.success) {
-          showAlert('등록 완료', 'ok');
-          form.reset();
-          form.querySelector('[name="cert_body"]').value = 'MCE 경영인증평가원';
-          loadList();
-        } else {
-          showAlert(res.error || '오류 발생', 'err');
-        }
-      })
-      .catch(function() {
-        loading(false);
-        showAlert('서버 오류', 'err');
-      });
-    }
-    
-    function loadList() {
-      fetch('/api/admin/list')
-      .then(function(r) { return r.json(); })
-      .then(function(res) {
-        allData = res.results || [];
-        updateStats();
-        renderTable();
-      })
-      .catch(function() {
-        document.getElementById('tbody').innerHTML = '<tr><td colspan="7" class="empty">데이터 로드 실패</td></tr>';
-      });
-    }
-    
-    function updateStats() {
-      var total = allData.length;
-      var active = 0, expired = 0, month = 0;
-      var now = new Date();
-      var mStart = new Date(now.getFullYear(), now.getMonth(), 1);
-      
-      for (var i = 0; i < allData.length; i++) {
-        var c = allData[i];
-        if (new Date(c.expiry_date) >= now) active++; else expired++;
-        if (c.created_at && new Date(c.created_at) >= mStart) month++;
-      }
-      
-      document.getElementById('sTotal').textContent = total;
-      document.getElementById('sActive').textContent = active;
-      document.getElementById('sExpired').textContent = expired;
-      document.getElementById('sMonth').textContent = month;
-    }
-    
-    function renderTable() {
-      var tb = document.getElementById('tbody');
-      if (allData.length === 0) {
-        tb.innerHTML = '<tr><td colspan="7" class="empty">등록된 인증이 없습니다.</td></tr>';
+    function showPreview(data) {
+      if (data.length === 0) {
+        alert('데이터가 없습니다.');
         return;
       }
       
-      var now = new Date();
-      var html = '';
-      for (var i = 0; i < allData.length; i++) {
-        var c = allData[i];
-        var exp = new Date(c.expiry_date) < now;
-        html += '<tr>';
-        html += '<td>' + esc(c.company_name) + '</td>';
-        html += '<td>' + esc(c.cert_number) + '</td>';
-        html += '<td>' + esc(c.cert_standard) + '</td>';
-        html += '<td>' + esc(c.issue_date) + '</td>';
-        html += '<td>' + esc(c.expiry_date) + '</td>';
-        html += '<td class="' + (exp ? 'st-exp' : 'st-ok') + '">' + (exp ? '만료' : '유효') + '</td>';
-        html += '<td><button class="btn btn-red" onclick="delItem(' + c.id + ')">삭제</button></td>';
-        html += '</tr>';
-      }
-      tb.innerHTML = html;
+      var preview = data.slice(0, 5);
+      var keys = Object.keys(preview[0]);
+      
+      var thead = '<tr>';
+      keys.forEach(function(k) {
+        thead += '<th>' + esc(k) + '</th>';
+      });
+      thead += '</tr>';
+      
+      var tbody = '';
+      preview.forEach(function(row) {
+        tbody += '<tr>';
+        keys.forEach(function(k) {
+          tbody += '<td>' + esc(row[k] || '') + '</td>';
+        });
+        tbody += '</tr>';
+      });
+      
+      document.querySelector('#previewTable thead').innerHTML = thead;
+      document.querySelector('#previewTable tbody').innerHTML = tbody;
+      document.getElementById('previewArea').style.display = 'block';
     }
     
-    function delItem(id) {
-      if (!confirm('삭제하시겠습니까?')) return;
-      loading(true);
+    function uploadBulk() {
+      if (excelData.length === 0) {
+        alert('업로드할 데이터가 없습니다.');
+        return;
+      }
       
-      fetch('/api/admin/delete/' + id, {method:'DELETE'})
+      // 컬럼 매핑
+      var mapped = excelData.map(function(row) {
+        return {
+          company_name: row['기업명'] || row['company_name'] || '',
+          cert_number: row['인증번호'] || row['cert_number'] || '',
+          cert_standard: row['인증규격'] || row['cert_standard'] || '',
+          cert_body: row['인증기관'] || row['cert_body'] || 'MCE 경영인증평가원',
+          issue_date: row['발급일'] || row['issue_date'] || '',
+          expiry_date: row['만료일'] || row['expiry_date'] || '',
+          scope: row['인증범위'] || row['scope'] || ''
+        };
+      });
+      
+      fetch('/api/admin/bulk', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({data: mapped})
+      })
       .then(function(r) { return r.json(); })
       .then(function(res) {
-        loading(false);
-        if (res.success) {
-          showAlert('삭제 완료', 'ok');
-          loadList();
+        if (res.error) {
+          showMessage('bulkMessage', res.error, 'error');
         } else {
-          showAlert(res.error || '오류 발생', 'err');
+          showMessage('bulkMessage', res.inserted + '건 등록되었습니다!', 'success');
+          excelData = [];
+          document.getElementById('previewArea').style.display = 'none';
+          document.getElementById('excelFile').value = '';
+          document.getElementById('fileInfo').innerHTML = '지원 형식: .xlsx, .xls, .csv<br>컬럼: 기업명, 인증번호, 인증규격, 인증기관, 발급일, 만료일, 인증범위';
         }
       })
       .catch(function() {
-        loading(false);
-        showAlert('서버 오류', 'err');
+        showMessage('bulkMessage', '업로드 실패', 'error');
       });
     }
     
-    function showAlert(msg, type) {
-      var box = document.getElementById('alertBox');
-      box.innerHTML = '<div class="alert alert-' + type + '">' + esc(msg) + '</div>';
-      setTimeout(function() { box.innerHTML = ''; }, 4000);
+    // DB 테스트
+    function testDb() {
+      var resultEl = document.getElementById('dbTestResult');
+      resultEl.style.display = 'block';
+      resultEl.innerHTML = '테스트 중...';
+      
+      fetch('/api/test-db')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var html = '';
+        if (data.success) {
+          html = '<div style="color:#2e7d32;"><strong>✓ ' + data.message + '</strong></div>';
+          html += '<div style="margin-top:10px;">테이블 존재: ' + (data.table_exists ? '예' : '아니오') + '</div>';
+          html += '<div>레코드 수: ' + data.record_count + '건</div>';
+        } else {
+          html = '<div style="color:#c62828;"><strong>✗ 오류</strong></div>';
+          html += '<div style="margin-top:10px;">' + esc(data.error) + '</div>';
+          if (data.hint) {
+            html += '<div style="margin-top:10px;color:#666;">' + esc(data.hint) + '</div>';
+          }
+        }
+        resultEl.innerHTML = html;
+      })
+      .catch(function(err) {
+        resultEl.innerHTML = '<div style="color:#c62828;">연결 실패: ' + err.message + '</div>';
+      });
     }
     
-    function loading(show) {
-      document.getElementById('overlay').className = show ? 'overlay show' : 'overlay';
+    function showMessage(id, text, type) {
+      var el = document.getElementById(id);
+      el.textContent = text;
+      el.className = 'message show ' + type;
+      setTimeout(function() {
+        el.className = 'message';
+      }, 5000);
     }
     
-    function esc(s) {
-      if (!s) return '';
+    function esc(str) {
+      if (str === null || str === undefined) return '';
       var d = document.createElement('div');
-      d.textContent = s;
+      d.textContent = String(str);
       return d.innerHTML;
     }
-    
-    loadList();
   </script>
 </body>
 </html>
