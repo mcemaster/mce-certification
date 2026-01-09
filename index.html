@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>인증기업검색 - MCE 경영인증평가원</title>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    /* 타이틀 */
+    .page-title {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #1a4b8c;
+    }
+    
+    .page-title h1 {
+      font-size: 26px;
+      color: #1a4b8c;
+      margin-bottom: 5px;
+    }
+    
+    .page-title .sub {
+      font-size: 13px;
+      color: #666;
+    }
+    
+    /* 입력 안내 */
+    .input-guide {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: #555;
+    }
+    
+    .input-guide .red {
+      color: #d00;
+      font-weight: bold;
+    }
+    
+    /* 검색 폼 */
+    .search-form {
+      background: #fff;
+      border: 2px solid #1a4b8c;
+      margin-bottom: 20px;
+    }
+    
+    .form-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .form-table th {
+      background: #f0f4f8;
+      color: #1a4b8c;
+      font-weight: 600;
+      padding: 15px;
+      text-align: left;
+      width: 150px;
+      border-bottom: 1px solid #ddd;
+      vertical-align: middle;
+    }
+    
+    .form-table th .en {
+      display: block;
+      font-size: 11px;
+      color: #888;
+      font-weight: normal;
+      margin-top: 2px;
+    }
+    
+    .form-table td {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .form-table tr:last-child th,
+    .form-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .form-input {
+      width: 100%;
+      max-width: 350px;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #1a4b8c;
+    }
+    
+    /* Turnstile */
+    .captcha-wrap {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .captcha-status {
+      font-size: 13px;
+      color: #888;
+    }
+    
+    .captcha-status.ok {
+      color: #0a0;
+      font-weight: bold;
+    }
+    
+    .captcha-status.fail {
+      color: #d00;
+    }
+    
+    /* 버튼 영역 */
+    .btn-area {
+      background: #f8f9fa;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .btn-search {
+      background: linear-gradient(to bottom, #2563a8, #1a4b8c);
+      color: #fff;
+      border: none;
+      padding: 14px 50px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .btn-search:hover {
+      background: linear-gradient(to bottom, #1a4b8c, #143a6b);
+    }
+    
+    .btn-search:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+    
+    /* 안내사항 */
+    .notice-box {
+      background: #fffef5;
+      border: 1px solid #e5d78e;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .notice-box h3 {
+      font-size: 14px;
+      color: #8a7000;
+      margin-bottom: 15px;
+    }
+    
+    .notice-list {
+      list-style: none;
+    }
+    
+    .notice-list li {
+      padding: 8px 0;
+      padding-left: 15px;
+      position: relative;
+      font-size: 13px;
+      color: #555;
+    }
+    
+    .notice-list li:before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #999;
+    }
+    
+    .notice-list .en {
+      display: block;
+      color: #888;
+      font-size: 12px;
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+    
+    /* 결과 영역 */
+    .result-section {
+      display: none;
+      margin-top: 25px;
+    }
+    
+    .result-section.show {
+      display: block;
+    }
+    
+    .result-title {
+      background: #1a4b8c;
+      color: #fff;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: bold;
+    }
+    
+    .result-body {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-top: none;
+    }
+    
+    .result-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .result-table th {
+      background: #f5f7fa;
+      padding: 12px 15px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 1px solid #ddd;
+      width: 130px;
+      font-size: 13px;
+      color: #333;
+    }
+    
+    .result-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+    
+    .result-table tr:last-child th,
+    .result-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .badge-valid {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    
+    .badge-expired {
+      background: #ffebee;
+      color: #c62828;
+    }
+    
+    /* 에러 */
+    .error-box {
+      display: none;
+      background: #ffebee;
+      border: 1px solid #ffcdd2;
+      color: #c62828;
+      padding: 15px 20px;
+      margin-top: 20px;
+    }
+    
+    .error-box.show {
+      display: block;
+    }
+    
+    /* 빈 결과 */
+    .no-data {
+      padding: 40px;
+      text-align: center;
+      color: #888;
+    }
+    
+    /* 로딩 */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 30px;
+    }
+    
+    .loading.show {
+      display: block;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #eee;
+      border-top-color: #1a4b8c;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* 푸터 */
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+      color: #888;
+      font-size: 12px;
+    }
+    
+    .footer a {
+      color: #1a4b8c;
+      text-decoration: none;
+    }
+    
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .form-table th {
+        width: 100px;
+        padding: 10px;
+      }
+      .form-table td {
+        padding: 10px;
+      }
+      .form-input {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- 타이틀 -->
+    <div class="page-title">
+      <h1>인증기업검색</h1>
+      <p class="sub">(Search for Certified Organizations)</p>
+    </div>
+    
+    <!-- 입력 안내 -->
+    <div class="input-guide">
+      <span class="red">*</span> 인증서에 명시되어 있는 인증기업명의 풀네임과 인증번호를 공백 없이, 문자부호(.,등)는 그대로 입력
+    </div>
+    
+    <!-- 검색 폼 -->
+    <form id="searchForm" onsubmit="doSearch(event)">
+      <div class="search-form">
+        <table class="form-table">
+          <tr>
+            <th>
+              기업명
+              <span class="en">(Company Name)</span>
+            </th>
+            <td>
+              <input type="text" id="companyName" class="form-input" placeholder="인증기업명을 입력하세요">
+            </td>
+          </tr>
+          <tr>
+            <th>
+              인증번호
+              <span class="en">(Certificate No.)</span>
+            </th>
+            <td>
+              <input type="text" id="certNumber" class="form-input" placeholder="인증번호를 입력하세요">
+            </td>
+          </tr>
+          <tr>
+            <th>
+              자동입력방지
+              <span class="en">(Security Check)</span>
+            </th>
+            <td>
+              <div class="captcha-wrap">
+                <div class="cf-turnstile" 
+                     data-sitekey="0x4AAAAAACLk4_UJ4jN7_9fB"
+                     data-callback="onCaptchaOk"
+                     data-expired-callback="onCaptchaFail">
+                </div>
+                <span id="captchaStatus" class="captcha-status">자동입력방지를 완료해주세요</span>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <div class="btn-area">
+          <button type="submit" id="btnSearch" class="btn-search" disabled>검 색</button>
+        </div>
+      </div>
+    </form>
+    
+    <!-- 안내사항 -->
+    <div class="notice-box">
+      <h3>※ 안내 (Notice)</h3>
+      <ul class="notice-list">
+        <li>
+          MCE 인증정보검색 결과는 MCE 경영인증평가원이 인증한 데이터에 근거하며, 인증서의 유효성 확인 및 인증 관련 자세한 문의는 MCE 경영인증평가원에 문의하시길 바랍니다.
+          <span class="en">(The data provided by MCE is based on the certification performance that MCE has certified. If you have certification related inquiries including certification validation, please contact MCE directly.)</span>
+        </li>
+        <li>
+          인증기업 개별 검색서비스는 1일 3회로 검색횟수를 제한합니다.
+          <span class="en">(A user can search up to 3 certifications per day.)</span>
+        </li>
+        <li>
+          3회란 검색 시도 횟수가 아닌, 검색 결과가 정상적으로 도출이 된 경우를 기준으로 합니다.
+          <span class="en">(This limit is based on successful search results, not the number of search attempts.)</span>
+        </li>
+        <li>
+          입력 시 정확한 기업명과 인증서번호가 매칭되어야 검색이 가능합니다.
+          <span class="en">(Both the certified organization name and the certificate number are required for the search.)</span>
+        </li>
+        <li>
+          데이터의 제공범위는 국제표준에서 요구하는 최소한의 인증유효성 확인정보로 제한합니다.
+          <span class="en">(The data provided by MCE is limited to the minimum information that the international standards require for certification validation.)</span>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- 로딩 -->
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>검색 중입니다...</p>
+    </div>
+    
+    <!-- 에러 -->
+    <div id="errorBox" class="error-box"></div>
+    
+    <!-- 결과 -->
+    <div id="resultSection" class="result-section"></div>
+    
+    <!-- 푸터 -->
+    <div class="footer">
+      <p>&copy; 2024 MCE 경영인증평가원. All Rights Reserved.</p>
+      <p style="margin-top:8px;"><a href="/admin.html">관리자 페이지</a></p>
+    </div>
+  </div>
+  
+  <script>
+    var captchaToken = '';
+    
+    function onCaptchaOk(token) {
+      captchaToken = token;
+      document.getElementById('captchaStatus').textContent = '✓ 인증 완료';
+      document.getElementById('captchaStatus').className = 'captcha-status ok';
+      document.getElementById('btnSearch').disabled = false;
+    }
+    
+    function onCaptchaFail() {
+      captchaToken = '';
+      document.getElementById('captchaStatus').textContent = '인증이 만료되었습니다';
+      document.getElementById('captchaStatus').className = 'captcha-status fail';
+      document.getElementById('btnSearch').disabled = true;
+    }
+    
+    function doSearch(e) {
+      e.preventDefault();
+      
+      var company = document.getElementById('companyName').value.trim();
+      var certNo = document.getElementById('certNumber').value.trim();
+      
+      hideError();
+      hideResult();
+      
+      if (!company && !certNo) {
+        showError('기업명 또는 인증번호를 입력해주세요.');
+        return;
+      }
+      
+      if (!captchaToken) {
+        showError('자동입력방지 인증을 완료해주세요.');
+        return;
+      }
+      
+      showLoading(true);
+      document.getElementById('btnSearch').disabled = true;
+      
+      fetch('/api/search', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          companyName: company,
+          certNumber: certNo,
+          token: captchaToken
+        })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        showLoading(false);
+        if (data.error) {
+          showError(data.error);
+        } else {
+          showResult(data.results || []);
+        }
+      })
+      .catch(function(err) {
+        showLoading(false);
+        showError('서버 연결 오류가 발생했습니다.');
+      })
+      .finally(function() {
+        resetCaptcha();
+      });
+    }
+    
+    function resetCaptcha() {
+      captchaToken = '';
+      document.getElementById('captchaStatus').textContent = '자동입력방지를 완료해주세요';
+      document.getElementById('captchaStatus').className = 'captcha-status';
+      document.getElementById('btnSearch').disabled = true;
+      if (typeof turnstile !== 'undefined') {
+        turnstile.reset();
+      }
+    }
+    
+    function showLoading(show) {
+      document.getElementById('loading').className = show ? 'loading show' : 'loading';
+    }
+    
+    function showError(msg) {
+      var box = document.getElementById('errorBox');
+      box.textContent = msg;
+      box.className = 'error-box show';
+    }
+    
+    function hideError() {
+      document.getElementById('errorBox').className = 'error-box';
+    }
+    
+    function hideResult() {
+      document.getElementById('resultSection').className = 'result-section';
+    }
+    
+    function showResult(list) {
+      var section = document.getElementById('resultSection');
+      
+      if (list.length === 0) {
+        section.innerHTML = '<div class="result-title">검색 결과</div><div class="result-body"><div class="no-data">검색 결과가 없습니다.<br>기업명과 인증번호를 다시 확인해주세요.</div></div>';
+        section.className = 'result-section show';
+        return;
+      }
+      
+      var html = '<div class="result-title">검색 결과 (' + list.length + '건)</div>';
+      
+      for (var i = 0; i < list.length; i++) {
+        var c = list[i];
+        var expired = new Date(c.expiry_date) < new Date();
+        var badgeClass = expired ? 'badge-expired' : 'badge-valid';
+        var badgeText = expired ? '만료 (Expired)' : '유효 (Valid)';
+        
+        html += '<div class="result-body" style="margin-bottom:10px;">';
+        html += '<table class="result-table">';
+        html += '<tr><th>기업명<br><span style="font-weight:normal;font-size:11px;color:#888;">(Company)</span></th><td>' + esc(c.company_name) + '</td></tr>';
+        html += '<tr><th>인증번호<br><span style="font-weight:normal;font-size:11px;color:#888;">(Cert No.)</span></th><td>' + esc(c.cert_number) + '</td></tr>';
+        html += '<tr><th>인증규격<br><span style="font-weight:normal;font-size:11px;color:#888;">(Standard)</span></th><td>' + esc(c.cert_standard) + '</td></tr>';
+        html += '<tr><th>인증기관<br><span style="font-weight:normal;font-size:11px;color:#888;">(CB)</span></th><td>' + esc(c.cert_body) + '</td></tr>';
+        html += '<tr><th>발급일<br><span style="font-weight:normal;font-size:11px;color:#888;">(Issue Date)</span></th><td>' + esc(c.issue_date) + '</td></tr>';
+        html += '<tr><th>만료일<br><span style="font-weight:normal;font-size:11px;color:#888;">(Expiry Date)</span></th><td>' + esc(c.expiry_date) + '</td></tr>';
+        html += '<tr><th>인증범위<br><span style="font-weight:normal;font-size:11px;color:#888;">(Scope)</span></th><td>' + esc(c.scope) + '</td></tr>';
+        html += '<tr><th>상태<br><span style="font-weight:normal;font-size:11px;color:#888;">(Status)</span></th><td><span class="badge ' + badgeClass + '">' + badgeText + '</span></td></tr>';
+        html += '</table>';
+        html += '</div>';
+      }
+      
+      section.innerHTML = html;
+      section.className = 'result-section show';
+    }
+    
+    function esc(str) {
+      if (!str) return '';
+      var d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+  </script>
+</body>
+</html>
