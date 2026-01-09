@@ -1,12 +1,19 @@
 const esbuild = require('esbuild');
+const fs = require('fs');
 const path = require('path');
 
+// Ensure output directory exists
+if (!fs.existsSync('dist')) {
+  fs.mkdirSync('dist', { recursive: true });
+}
+
+// Build the main app as ESM module for Cloudflare Pages Functions
 esbuild.build({
   entryPoints: ['src/index.tsx'],
   bundle: true,
-  outfile: 'dist/index.js',
+  outfile: 'functions/[[path]].js',
   format: 'esm',
-  platform: 'browser',
+  platform: 'neutral',
   target: 'es2022',
   jsx: 'automatic',
   jsxImportSource: 'hono/jsx',
@@ -15,5 +22,13 @@ esbuild.build({
   sourcemap: false,
   define: {
     'process.env.NODE_ENV': '"production"'
+  },
+  banner: {
+    js: '// Cloudflare Pages Function\n'
   }
-}).catch(() => process.exit(1));
+}).then(() => {
+  console.log('Build completed successfully!');
+}).catch((err) => {
+  console.error('Build failed:', err);
+  process.exit(1);
+});

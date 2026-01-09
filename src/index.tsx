@@ -1,5 +1,4 @@
 import { Hono } from 'hono';
-import { serveStatic } from 'hono/cloudflare-pages';
 import api from './routes/api';
 import CertificationSearch from './pages/CertificationSearch';
 
@@ -11,10 +10,6 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // API 라우트 등록
 app.route('/api', api);
-
-// 정적 파일 제공
-app.use('/static/*', serveStatic({ root: './' }));
-app.use('/public/*', serveStatic({ root: './' }));
 
 // 인증 검색 페이지
 app.get('/certification-search', (c) => {
@@ -48,5 +43,16 @@ app.get('/', (c) => {
     </html>
   );
 });
+
+// Cloudflare Pages Functions export
+export const onRequest = async (context: {
+  request: Request;
+  env: Bindings;
+  params: Record<string, string>;
+  waitUntil: (promise: Promise<unknown>) => void;
+  passThroughOnException: () => void;
+}) => {
+  return app.fetch(context.request, context.env, context);
+};
 
 export default app;
