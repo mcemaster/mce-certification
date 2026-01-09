@@ -6,6 +6,7 @@ const AdminPage = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>관리자 페이지 - MCE 경영인증평가원</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
       </head>
       <body class="bg-gray-100 min-h-screen">
         <nav class="bg-blue-800 text-white p-4 shadow-lg">
@@ -16,9 +17,86 @@ const AdminPage = () => {
         </nav>
 
         <div class="max-w-7xl mx-auto p-6">
+          {/* 엑셀 업로드 섹션 */}
+          <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+              <div>
+                <h2 class="text-xl font-bold text-gray-800">엑셀 일괄 업로드</h2>
+                <p class="text-sm text-gray-500 mt-1">엑셀 파일(.xlsx, .xls)로 여러 기업을 한번에 등록할 수 있습니다.</p>
+              </div>
+              <button onclick="downloadTemplate()" 
+                class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                양식 다운로드
+              </button>
+            </div>
+            
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors"
+              id="dropZone"
+              ondragover="handleDragOver(event)"
+              ondragleave="handleDragLeave(event)"
+              ondrop="handleDrop(event)">
+              <input type="file" id="excelFile" accept=".xlsx,.xls" class="hidden" onchange="handleFileSelect(event)" />
+              <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <p class="mt-2 text-sm text-gray-600">
+                <label for="excelFile" class="cursor-pointer text-blue-600 hover:text-blue-500 font-medium">
+                  파일 선택
+                </label>
+                 또는 드래그 앤 드롭
+              </p>
+              <p class="mt-1 text-xs text-gray-500">XLSX, XLS 파일 지원</p>
+            </div>
+
+            {/* 미리보기 영역 */}
+            <div id="previewSection" class="hidden mt-4">
+              <div class="flex justify-between items-center mb-2">
+                <h3 class="font-medium text-gray-800">미리보기 <span id="previewCount" class="text-blue-600"></span></h3>
+                <div class="flex gap-2">
+                  <button onclick="cancelUpload()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                    취소
+                  </button>
+                  <button onclick="confirmUpload()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    업로드 확인
+                  </button>
+                </div>
+              </div>
+              <div class="overflow-x-auto max-h-64 overflow-y-auto border rounded-lg">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                  <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">기업명</th>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">인증서번호</th>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">인증규격</th>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">발급일</th>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">만료일</th>
+                      <th class="px-3 py-2 text-left text-xs font-medium text-gray-500">상태</th>
+                    </tr>
+                  </thead>
+                  <tbody id="previewBody" class="bg-white divide-y divide-gray-200">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* 업로드 진행 상태 */}
+            <div id="uploadProgress" class="hidden mt-4">
+              <div class="flex items-center gap-3">
+                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                  <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <span id="progressText" class="text-sm text-gray-600">0%</span>
+              </div>
+              <p id="uploadStatus" class="text-sm text-gray-600 mt-2"></p>
+            </div>
+          </div>
+
           {/* 새 인증 추가 폼 */}
           <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">새 인증 기업 추가</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-4">새 인증 기업 추가 (개별)</h2>
             <form id="addForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">기업명 *</label>
@@ -452,6 +530,242 @@ const AdminPage = () => {
               loadCertifications();
             }
           });
+
+          // ========== 엑셀 업로드 관련 함수 ==========
+          let uploadData = [];
+
+          // 양식 다운로드
+          function downloadTemplate() {
+            const template = [
+              {
+                '기업명': '예시기업주식회사',
+                '인증서번호': 'KR-ISO9001-2024-999',
+                '인증규격': 'ISO 9001:2015',
+                '인증기관': 'MCE 경영인증평가원',
+                '발급일': '2024-01-15',
+                '만료일': '2027-01-14',
+                '인증범위': '제품 제조 및 판매',
+                '상태': 'active',
+                '담당자명': '홍길동',
+                '이메일': 'hong@example.com',
+                '연락처': '02-1234-5678',
+                '주소': '서울시 강남구 테헤란로 123'
+              }
+            ];
+            
+            const ws = XLSX.utils.json_to_sheet(template);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, '인증기업');
+            
+            // 열 너비 설정
+            ws['!cols'] = [
+              {wch: 20}, {wch: 25}, {wch: 18}, {wch: 18},
+              {wch: 12}, {wch: 12}, {wch: 30}, {wch: 10},
+              {wch: 12}, {wch: 25}, {wch: 15}, {wch: 35}
+            ];
+            
+            XLSX.writeFile(wb, 'MCE_인증기업_양식.xlsx');
+            showToast('양식 파일이 다운로드되었습니다.', 'success');
+          }
+
+          // 드래그 앤 드롭 핸들러
+          function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('dropZone').classList.add('border-blue-500', 'bg-blue-50');
+          }
+
+          function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('dropZone').classList.remove('border-blue-500', 'bg-blue-50');
+          }
+
+          function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.getElementById('dropZone').classList.remove('border-blue-500', 'bg-blue-50');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+              processFile(files[0]);
+            }
+          }
+
+          // 파일 선택 핸들러
+          function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+              processFile(file);
+            }
+          }
+
+          // 엑셀 파일 처리
+          function processFile(file) {
+            const validTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+            if (!validTypes.includes(file.type) && !file.name.match(/\\.(xlsx|xls)$/i)) {
+              showToast('엑셀 파일(.xlsx, .xls)만 업로드 가능합니다.', 'error');
+              return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                
+                if (jsonData.length === 0) {
+                  showToast('파일에 데이터가 없습니다.', 'error');
+                  return;
+                }
+
+                // 데이터 매핑 및 검증
+                uploadData = jsonData.map((row, index) => {
+                  // 날짜 변환 함수
+                  const parseDate = (value) => {
+                    if (!value) return '';
+                    if (typeof value === 'number') {
+                      // 엑셀 날짜 시리얼 넘버 변환
+                      const date = XLSX.SSF.parse_date_code(value);
+                      return \`\${date.y}-\${String(date.m).padStart(2, '0')}-\${String(date.d).padStart(2, '0')}\`;
+                    }
+                    return String(value);
+                  };
+
+                  return {
+                    company_name: row['기업명'] || '',
+                    cert_number: row['인증서번호'] || '',
+                    cert_standard: row['인증규격'] || '',
+                    cert_body: row['인증기관'] || 'MCE 경영인증평가원',
+                    issue_date: parseDate(row['발급일']),
+                    expiry_date: parseDate(row['만료일']),
+                    scope: row['인증범위'] || '',
+                    status: row['상태'] || 'active',
+                    contact_name: row['담당자명'] || '',
+                    contact_email: row['이메일'] || '',
+                    contact_phone: row['연락처'] || '',
+                    address: row['주소'] || '',
+                    _valid: !!(row['기업명'] && row['인증서번호'] && row['인증규격'] && row['발급일'] && row['만료일'] && row['인증범위'])
+                  };
+                });
+
+                showPreview();
+              } catch (error) {
+                console.error('Excel parsing error:', error);
+                showToast('파일을 읽는 중 오류가 발생했습니다.', 'error');
+              }
+            };
+            reader.readAsArrayBuffer(file);
+          }
+
+          // 미리보기 표시
+          function showPreview() {
+            const validCount = uploadData.filter(d => d._valid).length;
+            const invalidCount = uploadData.length - validCount;
+            
+            document.getElementById('previewCount').textContent = 
+              \`(총 \${uploadData.length}건, 유효 \${validCount}건\${invalidCount > 0 ? ', 오류 ' + invalidCount + '건' : ''})\`;
+            
+            const tbody = document.getElementById('previewBody');
+            tbody.innerHTML = uploadData.map((row, i) => \`
+              <tr class="\${row._valid ? '' : 'bg-red-50'}">
+                <td class="px-3 py-2 \${!row.company_name ? 'text-red-500' : ''}">\${row.company_name || '(필수)'}</td>
+                <td class="px-3 py-2 \${!row.cert_number ? 'text-red-500' : ''}">\${row.cert_number || '(필수)'}</td>
+                <td class="px-3 py-2 \${!row.cert_standard ? 'text-red-500' : ''}">\${row.cert_standard || '(필수)'}</td>
+                <td class="px-3 py-2 \${!row.issue_date ? 'text-red-500' : ''}">\${row.issue_date || '(필수)'}</td>
+                <td class="px-3 py-2 \${!row.expiry_date ? 'text-red-500' : ''}">\${row.expiry_date || '(필수)'}</td>
+                <td class="px-3 py-2">
+                  <span class="px-2 py-1 text-xs rounded-full \${
+                    row.status === 'active' ? 'bg-green-100 text-green-800' : 
+                    row.status === 'expired' ? 'bg-red-100 text-red-800' : 
+                    'bg-yellow-100 text-yellow-800'
+                  }">
+                    \${row.status === 'active' ? '유효' : row.status === 'expired' ? '만료' : row.status}
+                  </span>
+                </td>
+              </tr>
+            \`).join('');
+            
+            document.getElementById('previewSection').classList.remove('hidden');
+          }
+
+          // 업로드 취소
+          function cancelUpload() {
+            uploadData = [];
+            document.getElementById('previewSection').classList.add('hidden');
+            document.getElementById('excelFile').value = '';
+          }
+
+          // 업로드 확인
+          async function confirmUpload() {
+            const validData = uploadData.filter(d => d._valid);
+            
+            if (validData.length === 0) {
+              showToast('유효한 데이터가 없습니다.', 'error');
+              return;
+            }
+
+            if (!confirm(\`\${validData.length}건의 데이터를 업로드하시겠습니까?\`)) {
+              return;
+            }
+
+            document.getElementById('previewSection').classList.add('hidden');
+            document.getElementById('uploadProgress').classList.remove('hidden');
+            
+            let success = 0;
+            let failed = 0;
+            const total = validData.length;
+
+            for (let i = 0; i < validData.length; i++) {
+              const item = validData[i];
+              delete item._valid;
+              
+              try {
+                const response = await fetch('/api/admin/certifications', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(item)
+                });
+                
+                if (response.ok) {
+                  success++;
+                } else {
+                  failed++;
+                }
+              } catch (error) {
+                failed++;
+              }
+              
+              // 진행률 업데이트
+              const progress = Math.round(((i + 1) / total) * 100);
+              document.getElementById('progressBar').style.width = progress + '%';
+              document.getElementById('progressText').textContent = progress + '%';
+              document.getElementById('uploadStatus').textContent = 
+                \`처리 중... (\${i + 1}/\${total}) - 성공: \${success}, 실패: \${failed}\`;
+            }
+
+            // 완료
+            document.getElementById('uploadStatus').textContent = 
+              \`완료! 성공: \${success}건, 실패: \${failed}건\`;
+            
+            setTimeout(() => {
+              document.getElementById('uploadProgress').classList.add('hidden');
+              document.getElementById('progressBar').style.width = '0%';
+              document.getElementById('progressText').textContent = '0%';
+              uploadData = [];
+              document.getElementById('excelFile').value = '';
+              loadCertifications();
+              
+              if (failed > 0) {
+                showToast(\`\${success}건 성공, \${failed}건 실패 (중복 인증서번호 등)\`, 'error');
+              } else {
+                showToast(\`\${success}건이 성공적으로 업로드되었습니다.\`, 'success');
+              }
+            }, 1500);
+          }
         `}} />
       </body>
     </html>
