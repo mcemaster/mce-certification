@@ -1,5 +1,5 @@
 // POST /api/search - 인증기업 검색
-var TURNSTILE_SECRET = '0x4AAAAAACLk4eP1GfYKvMYC_fKrWVvkGZo';
+var TURNSTILE_SECRET = '0x4AAAAAACLk45Mz5K1C4uE7OamqgUupAj4';
 
 export async function onRequestPost(context) {
   var req = context.request;
