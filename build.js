@@ -2,35 +2,34 @@ const esbuild = require('esbuild');
 const fs = require('fs');
 const path = require('path');
 
-// Ensure output directories exist
-if (!fs.existsSync('public')) {
-  fs.mkdirSync('public', { recursive: true });
+// Clean and ensure output directories exist
+if (fs.existsSync('dist')) {
+  fs.rmSync('dist', { recursive: true });
 }
-if (!fs.existsSync('functions')) {
-  fs.mkdirSync('functions', { recursive: true });
-}
+fs.mkdirSync('dist', { recursive: true });
+fs.mkdirSync('dist/functions', { recursive: true });
 
-// Create a minimal index.html for static hosting (redirects to the app)
+// Create a minimal _routes.json to let functions handle all routes
+const routesJson = {
+  version: 1,
+  include: ["/*"],
+  exclude: []
+};
+fs.writeFileSync('dist/_routes.json', JSON.stringify(routesJson, null, 2));
+console.log('Created dist/_routes.json');
+
+// Create empty index.html placeholder (functions will handle all routes)
 const indexHtml = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=/">
-  <title>Redirecting...</title>
-</head>
-<body>
-  <p>Redirecting...</p>
-</body>
-</html>`;
-
-fs.writeFileSync('public/index.html', indexHtml);
-console.log('Created public/index.html');
+<html><head><meta charset="UTF-8"><title>MCE</title></head>
+<body><script>window.location.href='/';</script></body></html>`;
+fs.writeFileSync('dist/index.html', indexHtml);
+console.log('Created dist/index.html');
 
 // Build the main app as ESM module for Cloudflare Pages Functions
 esbuild.build({
   entryPoints: ['src/index.tsx'],
   bundle: true,
-  outfile: 'functions/[[path]].js',
+  outfile: 'dist/functions/[[path]].js',
   format: 'esm',
   platform: 'neutral',
   target: 'es2022',
@@ -47,7 +46,10 @@ esbuild.build({
   }
 }).then(() => {
   console.log('Build completed successfully!');
-  console.log('Output: functions/[[path]].js');
+  console.log('Output directory: dist/');
+  console.log('  - dist/index.html (placeholder)');
+  console.log('  - dist/_routes.json (routing config)');
+  console.log('  - dist/functions/[[path]].js (Pages Function)');
 }).catch((err) => {
   console.error('Build failed:', err);
   process.exit(1);

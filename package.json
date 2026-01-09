@@ -4,8 +4,8 @@
   "description": "MCE 경영인증평가원 인증 기업 검색 시스템",
   "main": "src/index.tsx",
   "scripts": {
-    "dev": "wrangler pages dev public --port 3000",
-    "deploy": "npm run build && wrangler pages deploy public",
+    "dev": "npm run build && wrangler pages dev dist --port 3000",
+    "deploy": "npm run build && wrangler pages deploy dist",
     "build": "node build.js",
     "db:migrate": "wrangler d1 execute DB --file=migrations/003_create_certifications.sql",
     "db:seed": "wrangler d1 execute DB --file=seed_certifications.sql"
