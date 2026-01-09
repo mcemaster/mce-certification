@@ -31,7 +31,11 @@ export async function onRequestPost(context) {
     var verifyResult = await verify.json();
     
     if (!verifyResult.success) {
-      return new Response(JSON.stringify({error: '자동입력방지 인증에 실패했습니다.'}), {status: 400, headers: headers});
+      // 디버깅을 위해 에러 상세 정보 반환
+      return new Response(JSON.stringify({
+        error: '자동입력방지 인증에 실패했습니다.',
+        debug: verifyResult
+      }), {status: 400, headers: headers});
     }
     
     // 검색
