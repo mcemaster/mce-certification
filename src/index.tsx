@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import api from './routes/api';
 import CertificationSearch from './pages/CertificationSearch';
+import AdminPage from './pages/AdminPage';
 
 type Bindings = {
   DB: D1Database;
@@ -14,6 +15,11 @@ app.route('/api', api);
 // 인증 검색 페이지
 app.get('/certification-search', (c) => {
   return c.html(<CertificationSearch />);
+});
+
+// 관리자 페이지
+app.get('/admin', (c) => {
+  return c.html(<AdminPage />);
 });
 
 // 홈 페이지

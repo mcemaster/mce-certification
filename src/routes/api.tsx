@@ -118,4 +118,136 @@ api.get('/admin/certifications', async (c) => {
   }
 });
 
+// 관리자용 인증 추가
+api.post('/admin/certifications', async (c) => {
+  try {
+    const body = await c.req.json();
+    const {
+      company_name,
+      cert_number,
+      cert_standard,
+      cert_body = 'MCE 경영인증평가원',
+      issue_date,
+      expiry_date,
+      scope,
+      status = 'active',
+      contact_name = '',
+      contact_email = '',
+      contact_phone = '',
+      address = ''
+    } = body;
+
+    // 필수 필드 검증
+    if (!company_name || !cert_number || !cert_standard || !issue_date || !expiry_date || !scope) {
+      return c.json({ error: '필수 항목을 모두 입력해주세요.' }, 400);
+    }
+
+    // 중복 체크
+    const existing = await c.env.DB.prepare(
+      'SELECT id FROM certifications WHERE cert_number = ?'
+    ).bind(cert_number).first();
+
+    if (existing) {
+      return c.json({ error: '이미 존재하는 인증서번호입니다.' }, 400);
+    }
+
+    const result = await c.env.DB.prepare(
+      `INSERT INTO certifications (company_name, cert_number, cert_standard, cert_body, issue_date, expiry_date, scope, status, contact_name, contact_email, contact_phone, address)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      company_name, cert_number, cert_standard, cert_body,
+      issue_date, expiry_date, scope, status,
+      contact_name, contact_email, contact_phone, address
+    ).run();
+
+    return c.json({ success: true, message: '인증 기업이 추가되었습니다.' }, 201);
+  } catch (error) {
+    console.error('Admin create error:', error);
+    return c.json({ error: '추가 중 오류가 발생했습니다.' }, 500);
+  }
+});
+
+// 관리자용 인증 수정
+api.put('/admin/certifications/:id', async (c) => {
+  const id = c.req.param('id');
+  
+  try {
+    const body = await c.req.json();
+    const {
+      company_name,
+      cert_number,
+      cert_standard,
+      cert_body,
+      issue_date,
+      expiry_date,
+      scope,
+      status,
+      contact_name,
+      contact_email,
+      contact_phone,
+      address
+    } = body;
+
+    // 존재 확인
+    const existing = await c.env.DB.prepare(
+      'SELECT id FROM certifications WHERE id = ?'
+    ).bind(id).first();
+
+    if (!existing) {
+      return c.json({ error: '해당 인증 정보를 찾을 수 없습니다.' }, 404);
+    }
+
+    // 인증서번호 중복 체크 (자기 자신 제외)
+    const duplicate = await c.env.DB.prepare(
+      'SELECT id FROM certifications WHERE cert_number = ? AND id != ?'
+    ).bind(cert_number, id).first();
+
+    if (duplicate) {
+      return c.json({ error: '이미 존재하는 인증서번호입니다.' }, 400);
+    }
+
+    await c.env.DB.prepare(
+      `UPDATE certifications SET 
+        company_name = ?, cert_number = ?, cert_standard = ?, cert_body = ?,
+        issue_date = ?, expiry_date = ?, scope = ?, status = ?,
+        contact_name = ?, contact_email = ?, contact_phone = ?, address = ?,
+        updated_at = CURRENT_TIMESTAMP
+       WHERE id = ?`
+    ).bind(
+      company_name, cert_number, cert_standard, cert_body,
+      issue_date, expiry_date, scope, status,
+      contact_name, contact_email, contact_phone, address,
+      id
+    ).run();
+
+    return c.json({ success: true, message: '인증 정보가 수정되었습니다.' });
+  } catch (error) {
+    console.error('Admin update error:', error);
+    return c.json({ error: '수정 중 오류가 발생했습니다.' }, 500);
+  }
+});
+
+// 관리자용 인증 삭제
+api.delete('/admin/certifications/:id', async (c) => {
+  const id = c.req.param('id');
+  
+  try {
+    // 존재 확인
+    const existing = await c.env.DB.prepare(
+      'SELECT id FROM certifications WHERE id = ?'
+    ).bind(id).first();
+
+    if (!existing) {
+      return c.json({ error: '해당 인증 정보를 찾을 수 없습니다.' }, 404);
+    }
+
+    await c.env.DB.prepare('DELETE FROM certifications WHERE id = ?').bind(id).run();
+
+    return c.json({ success: true, message: '인증 정보가 삭제되었습니다.' });
+  } catch (error) {
+    console.error('Admin delete error:', error);
+    return c.json({ error: '삭제 중 오류가 발생했습니다.' }, 500);
+  }
+});
+
 export default api;
