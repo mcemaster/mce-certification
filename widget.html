@@ -29,8 +29,8 @@
     
     /* 검색 컨테이너 */
     .mce-search-container {
-      background: #fafafa;
-      border: 1px solid #e8e8e8;
+      background: #fff;
+      border: 2px solid #1a4b8c;
       padding: 35px 30px;
     }
     
@@ -38,32 +38,34 @@
     .mce-search-title {
       text-align: center;
       margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #1a4b8c;
     }
     
     .mce-search-title h2 {
-      font-size: 22px;
-      font-weight: 600;
-      color: #2c2c2c;
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a4b8c;
       margin-bottom: 6px;
       letter-spacing: -0.5px;
     }
     
     .mce-search-title p {
       font-size: 13px;
-      color: #888;
+      color: #666;
       font-weight: 400;
     }
     
     /* 검색 폼 */
     .mce-search-form {
-      max-width: 600px;
+      max-width: 650px;
       margin: 0 auto;
     }
     
     .mce-form-row {
       display: flex;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 15px;
+      margin-bottom: 15px;
     }
     
     .mce-form-group {
@@ -72,16 +74,22 @@
     
     .mce-form-group label {
       display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: #555;
-      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a4b8c;
+      margin-bottom: 8px;
+    }
+    
+    .mce-form-group label span {
+      font-weight: 400;
+      color: #888;
+      font-size: 12px;
     }
     
     .mce-form-group input {
       width: 100%;
       padding: 12px 14px;
-      border: 1px solid #ddd;
+      border: 1px solid #ccc;
       background: #fff;
       font-size: 14px;
       color: #333;
@@ -90,8 +98,8 @@
     }
     
     .mce-form-group input:focus {
-      border-color: #555;
-      box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+      border-color: #1a4b8c;
+      box-shadow: 0 0 0 3px rgba(26, 75, 140, 0.1);
     }
     
     .mce-form-group input::placeholder {
@@ -103,9 +111,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 15px;
     }
     
     .mce-captcha-wrap {
@@ -120,58 +128,46 @@
     }
     
     .mce-captcha-status.ok {
-      color: #4a9f4a;
-      font-weight: 500;
+      color: #0a7d0a;
+      font-weight: 600;
     }
     
     /* 검색 버튼 */
     .mce-btn-search {
-      background: #3a3a3a;
+      background: linear-gradient(to bottom, #2563a8, #1a4b8c);
       color: #fff;
       border: none;
-      padding: 13px 40px;
-      font-size: 14px;
-      font-weight: 500;
+      padding: 14px 50px;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
       transition: background 0.2s;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
     }
     
     .mce-btn-search:hover {
-      background: #2a2a2a;
+      background: linear-gradient(to bottom, #1a4b8c, #143a6b);
     }
     
     .mce-btn-search:disabled {
-      background: #ccc;
+      background: #aaa;
       cursor: not-allowed;
     }
     
     /* 안내문구 */
     .mce-notice {
-      max-width: 600px;
-      margin: 20px auto 0;
-      padding: 18px 20px;
-      background: #fff;
-      border: 1px solid #e8e8e8;
+      max-width: 650px;
+      margin: 25px auto 0;
+      padding: 20px;
+      background: #fffef5;
+      border: 1px solid #e5d78e;
     }
     
     .mce-notice-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #666;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .mce-notice-title::before {
-      content: "";
-      display: inline-block;
-      width: 4px;
-      height: 4px;
-      background: #888;
-      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 700;
+      color: #8a7000;
+      margin-bottom: 15px;
     }
     
     .mce-notice-list {
@@ -179,35 +175,37 @@
     }
     
     .mce-notice-list li {
-      font-size: 12px;
-      color: #777;
-      line-height: 1.7;
-      padding-left: 12px;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.8;
+      padding-left: 15px;
       position: relative;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
     
     .mce-notice-list li::before {
-      content: "-";
+      content: "•";
       position: absolute;
       left: 0;
-      color: #aaa;
+      color: #999;
     }
     
     .mce-notice-list li .en {
-      color: #999;
-      font-size: 11px;
+      display: block;
+      color: #888;
+      font-size: 12px;
+      margin-top: 2px;
     }
     
     /* 에러 메시지 */
     .mce-error {
       display: none;
-      max-width: 600px;
+      max-width: 650px;
       margin: 15px auto 0;
       padding: 12px 15px;
-      background: #fff5f5;
-      border: 1px solid #ffdddd;
-      color: #c44;
+      background: #ffebee;
+      border: 1px solid #ffcdd2;
+      color: #c62828;
       font-size: 13px;
       text-align: center;
     }
@@ -248,11 +246,11 @@
     <form class="mce-search-form" onsubmit="mceDoSearch(event)">
       <div class="mce-form-row">
         <div class="mce-form-group">
-          <label>기업명 <span style="color:#999;font-weight:400;">(Company Name)</span></label>
+          <label>기업명 <span>(Company Name)</span></label>
           <input type="text" id="mceCompanyName" placeholder="인증기업명을 입력하세요">
         </div>
         <div class="mce-form-group">
-          <label>인증번호 <span style="color:#999;font-weight:400;">(Certificate No.)</span></label>
+          <label>인증번호 <span>(Certificate No.)</span></label>
           <input type="text" id="mceCertNumber" placeholder="인증번호를 입력하세요">
         </div>
       </div>
@@ -276,11 +274,20 @@
     
     <!-- 안내문구 -->
     <div class="mce-notice">
-      <div class="mce-notice-title">안내사항 (Notice)</div>
+      <div class="mce-notice-title">※ 안내 (Notice)</div>
       <ul class="mce-notice-list">
-        <li>인증서에 명시된 기업명과 인증번호를 정확히 입력해주세요.</li>
-        <li>검색 결과는 MCE 경영인증평가원의 인증 데이터를 기반으로 합니다.</li>
-        <li>인증서 유효성 확인 및 상세 문의는 MCE 경영인증평가원으로 연락해주세요.</li>
+        <li>
+          MCE 인증정보검색 결과는 MCE 경영인증평가원이 인증한 데이터에 근거합니다.
+          <span class="en">(The data is based on the certification that MCE has certified.)</span>
+        </li>
+        <li>
+          인증서 유효성 확인 및 상세 문의는 MCE 경영인증평가원으로 연락해주세요.
+          <span class="en">(For certification validation, please contact MCE directly.)</span>
+        </li>
+        <li>
+          인증서에 명시된 기업명과 인증번호를 정확히 입력해주세요.
+          <span class="en">(Please enter the exact company name and certificate number.)</span>
+        </li>
       </ul>
     </div>
   </div>
