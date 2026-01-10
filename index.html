@@ -587,58 +587,6 @@
       d.textContent = str;
       return d.innerHTML;
     }
-    
-    // URL 파라미터로 자동 검색 (아임웹 위젯에서 이동 시)
-    function checkAutoSearch() {
-      var params = new URLSearchParams(window.location.search);
-      var company = params.get('company') || '';
-      var cert = params.get('cert') || '';
-      var token = params.get('token') || '';
-      var auto = params.get('auto');
-      
-      if (auto === '1' && token && (company || cert)) {
-        // 입력 필드에 값 설정
-        document.getElementById('companyName').value = company;
-        document.getElementById('certNumber').value = cert;
-        
-        // 토큰 설정 및 자동 검색 실행
-        captchaToken = token;
-        document.getElementById('captchaStatus').textContent = '✓ 인증 완료';
-        document.getElementById('captchaStatus').className = 'captcha-status ok';
-        
-        // 자동 검색 실행
-        showLoading(true);
-        
-        fetch('/api/search', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            companyName: company,
-            certNumber: cert,
-            token: token
-          })
-        })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          showLoading(false);
-          if (data.error) {
-            showError(data.error);
-          } else {
-            showResult(data.results || []);
-          }
-        })
-        .catch(function(err) {
-          showLoading(false);
-          showError('서버 연결 오류가 발생했습니다.');
-        });
-        
-        // URL에서 파라미터 제거 (깔끔하게)
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-    }
-    
-    // 페이지 로드 시 자동 검색 체크
-    window.addEventListener('DOMContentLoaded', checkAutoSearch);
   </script>
 </body>
 </html>
