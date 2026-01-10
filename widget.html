@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCE 인증기업검색 위젯 - 아임웹용</title>
+</head>
+<body style="background:#f5f5f5; padding:20px;">
+
+<!-- ========================================
+     MCE 인증기업검색 위젯 - 아임웹용
+     
+     사용방법:
+     1. 아임웹 관리자 접속
+     2. 원하는 페이지 편집
+     3. 위젯 추가 → HTML 선택
+     4. 아래 코드 전체를 복사하여 붙여넣기
+======================================== -->
+
+<div id="mce-cert-search">
+  <style>
+    #mce-cert-search {
+      font-family: 'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0;
+      line-height: 1.6;
+      font-size: 14px;
+      color: #333;
+    }
+    
+    #mce-cert-search * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* 타이틀 */
+    .mce-page-title {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #1a4b8c;
+    }
+    
+    .mce-page-title h2 {
+      font-size: 26px;
+      color: #1a4b8c;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    .mce-page-title .mce-sub {
+      font-size: 13px;
+      color: #666;
+    }
+    
+    /* 입력 안내 */
+    .mce-input-guide {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: #555;
+    }
+    
+    .mce-input-guide .mce-red {
+      color: #d00;
+      font-weight: bold;
+    }
+    
+    /* 검색 폼 */
+    .mce-search-box {
+      background: #fff;
+      border: 2px solid #1a4b8c;
+      margin-bottom: 20px;
+    }
+    
+    .mce-form-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .mce-form-table th {
+      background: #f0f4f8;
+      color: #1a4b8c;
+      font-weight: 600;
+      padding: 15px;
+      text-align: left;
+      width: 150px;
+      border-bottom: 1px solid #ddd;
+      vertical-align: middle;
+    }
+    
+    .mce-form-table th .mce-en {
+      display: block;
+      font-size: 11px;
+      color: #888;
+      font-weight: normal;
+      margin-top: 2px;
+    }
+    
+    .mce-form-table td {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .mce-form-table tr:last-child th,
+    .mce-form-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .mce-form-input {
+      width: 100%;
+      max-width: 350px;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+    }
+    
+    .mce-form-input:focus {
+      border-color: #1a4b8c;
+    }
+    
+    /* Turnstile */
+    .mce-captcha-wrap {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .mce-captcha-status {
+      font-size: 13px;
+      color: #888;
+    }
+    
+    .mce-captcha-status.mce-ok {
+      color: #0a0;
+      font-weight: bold;
+    }
+    
+    .mce-captcha-status.mce-fail {
+      color: #d00;
+    }
+    
+    /* 버튼 영역 */
+    .mce-btn-area {
+      background: #f8f9fa;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .mce-btn-search {
+      background: linear-gradient(to bottom, #2563a8, #1a4b8c);
+      color: #fff;
+      border: none;
+      padding: 14px 50px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .mce-btn-search:hover {
+      background: linear-gradient(to bottom, #1a4b8c, #143a6b);
+    }
+    
+    .mce-btn-search:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+    
+    /* 안내사항 */
+    .mce-notice-box {
+      background: #fffef5;
+      border: 1px solid #e5d78e;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .mce-notice-box h3 {
+      font-size: 14px;
+      color: #8a7000;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+    
+    .mce-notice-list {
+      list-style: none;
+    }
+    
+    .mce-notice-list li {
+      padding: 8px 0;
+      padding-left: 15px;
+      position: relative;
+      font-size: 13px;
+      color: #555;
+    }
+    
+    .mce-notice-list li:before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #999;
+    }
+    
+    .mce-notice-list .mce-en {
+      display: block;
+      color: #888;
+      font-size: 12px;
+      margin-top: 3px;
+      line-height: 1.5;
+    }
+    
+    /* 에러 */
+    .mce-error-box {
+      display: none;
+      background: #ffebee;
+      border: 1px solid #ffcdd2;
+      color: #c62828;
+      padding: 15px 20px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    
+    .mce-error-box.mce-show {
+      display: block;
+    }
+    
+    /* 반응형 */
+    @media (max-width: 600px) {
+      .mce-form-table th {
+        width: 100px;
+        padding: 10px;
+      }
+      .mce-form-table td {
+        padding: 10px;
+      }
+      .mce-form-input {
+        max-width: 100%;
+      }
+      .mce-btn-search {
+        width: 100%;
+        padding: 14px 20px;
+      }
+    }
+  </style>
+  
+  <!-- 타이틀 -->
+  <div class="mce-page-title">
+    <h2>인증기업검색</h2>
+    <p class="mce-sub">(Search for Certified Organizations)</p>
+  </div>
+  
+  <!-- 입력 안내 -->
+  <div class="mce-input-guide">
+    <span class="mce-red">*</span> 인증서에 명시되어 있는 인증기업명의 풀네임과 인증번호를 공백 없이, 문자부호(.,등)는 그대로 입력
+  </div>
+  
+  <!-- 검색 폼 -->
+  <form id="mceSearchForm" onsubmit="mceDoSearch(event)">
+    <div class="mce-search-box">
+      <table class="mce-form-table">
+        <tr>
+          <th>
+            기업명
+            <span class="mce-en">(Company Name)</span>
+          </th>
+          <td>
+            <input type="text" id="mceCompanyName" class="mce-form-input" placeholder="인증기업명을 입력하세요">
+          </td>
+        </tr>
+        <tr>
+          <th>
+            인증번호
+            <span class="mce-en">(Certificate No.)</span>
+          </th>
+          <td>
+            <input type="text" id="mceCertNumber" class="mce-form-input" placeholder="인증번호를 입력하세요">
+          </td>
+        </tr>
+        <tr>
+          <th>
+            자동입력방지
+            <span class="mce-en">(Security Check)</span>
+          </th>
+          <td>
+            <div class="mce-captcha-wrap">
+              <div class="cf-turnstile" 
+                   data-sitekey="0x4AAAAAACLk4_UJ4jN7_9fB"
+                   data-callback="mceOnCaptchaOk"
+                   data-expired-callback="mceOnCaptchaFail">
+              </div>
+              <span id="mceCaptchaStatus" class="mce-captcha-status">자동입력방지를 완료해주세요</span>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="mce-btn-area">
+        <button type="submit" id="mceBtnSearch" class="mce-btn-search" disabled>검 색</button>
+      </div>
+    </div>
+  </form>
+  
+  <!-- 안내사항 -->
+  <div class="mce-notice-box">
+    <h3>※ 안내 (Notice)</h3>
+    <ul class="mce-notice-list">
+      <li>
+        MCE 인증정보검색 결과는 MCE 경영인증평가원이 인증한 데이터에 근거하며, 인증서의 유효성 확인 및 인증 관련 자세한 문의는 MCE 경영인증평가원에 문의하시길 바랍니다.
+        <span class="mce-en">(The data provided by MCE is based on the certification performance that MCE has certified. If you have certification related inquiries including certification validation, please contact MCE directly.)</span>
+      </li>
+      <li>
+        인증기업 개별 검색서비스는 1일 3회로 검색횟수를 제한합니다.
+        <span class="mce-en">(A user can search up to 3 certifications per day.)</span>
+      </li>
+      <li>
+        3회란 검색 시도 횟수가 아닌, 검색 결과가 정상적으로 도출이 된 경우를 기준으로 합니다.
+        <span class="mce-en">(This limit is based on successful search results, not the number of search attempts.)</span>
+      </li>
+      <li>
+        입력 시 정확한 기업명과 인증서번호가 매칭되어야 검색이 가능합니다.
+        <span class="mce-en">(Both the certified organization name and the certificate number are required for the search.)</span>
+      </li>
+      <li>
+        데이터의 제공범위는 국제표준에서 요구하는 최소한의 인증유효성 확인정보로 제한합니다.
+        <span class="mce-en">(The data provided by MCE is limited to the minimum information that the international standards require for certification validation.)</span>
+      </li>
+    </ul>
+  </div>
+  
+  <!-- 에러 -->
+  <div id="mceErrorBox" class="mce-error-box"></div>
+  
+  <!-- Turnstile 스크립트 -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  
+  <script>
+    var mceCaptchaToken = '';
+    
+    function mceOnCaptchaOk(token) {
+      mceCaptchaToken = token;
+      document.getElementById('mceCaptchaStatus').textContent = '✓ 인증 완료';
+      document.getElementById('mceCaptchaStatus').className = 'mce-captcha-status mce-ok';
+      document.getElementById('mceBtnSearch').disabled = false;
+    }
+    
+    function mceOnCaptchaFail() {
+      mceCaptchaToken = '';
+      document.getElementById('mceCaptchaStatus').textContent = '인증이 만료되었습니다';
+      document.getElementById('mceCaptchaStatus').className = 'mce-captcha-status mce-fail';
+      document.getElementById('mceBtnSearch').disabled = true;
+    }
+    
+    function mceShowError(msg) {
+      var box = document.getElementById('mceErrorBox');
+      box.textContent = msg;
+      box.className = 'mce-error-box mce-show';
+    }
+    
+    function mceHideError() {
+      document.getElementById('mceErrorBox').className = 'mce-error-box';
+    }
+    
+    function mceDoSearch(e) {
+      e.preventDefault();
+      mceHideError();
+      
+      var company = document.getElementById('mceCompanyName').value.trim();
+      var certNo = document.getElementById('mceCertNumber').value.trim();
+      
+      if (!company && !certNo) {
+        mceShowError('기업명 또는 인증번호를 입력해주세요.');
+        return;
+      }
+      
+      if (!mceCaptchaToken) {
+        mceShowError('자동입력방지 인증을 완료해주세요.');
+        return;
+      }
+      
+      // 검색 결과 페이지로 이동
+      var searchUrl = 'https://mce-certification.pages.dev/';
+      searchUrl += '?company=' + encodeURIComponent(company);
+      searchUrl += '&cert=' + encodeURIComponent(certNo);
+      searchUrl += '&token=' + encodeURIComponent(mceCaptchaToken);
+      searchUrl += '&auto=1';
+      
+      window.open(searchUrl, '_blank');
+    }
+  </script>
+</div>
+
+<!-- ======================================== -->
+
+</body>
+</html>
